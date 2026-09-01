@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CuteMaker 🎀</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:20px;background:#ffe8f2;font-family:Arial,sans-serif;text-align:center;color:#5c3a49}
+.app{max-width:600px;margin:auto}
+h1{color:#d94f8a;font-size:38px}
+.tools{background:white;padding:20px;border-radius:25px;box-shadow:0 5px 20px rgba(0,0,0,.1)}
+input[type=text]{width:80%;padding:12px;border:2px solid #ffb6d5;border-radius:15px;font-size:16px}
+input[type=color]{width:60px;height:40px}
+button{margin:5px;padding:11px 15px;border:0;border-radius:15px;background:#ffe0ed;cursor:pointer;font-size:16px}
+#ekle,#kaydet,#indir{background:#ff82b4;color:white;font-weight:bold}
+.sticker{font-size:24px}
+#onizleme{width:100%;max-width:550px;min-height:280px;margin:25px auto;background:#ffe8f2;border:5px solid white;border-radius:30px;display:flex;align-items:center;justify-content:center;padding:20px;font-size:30px;font-weight:bold;overflow-wrap:anywhere}
+#kayitlar{display:none;margin-top:15px;background:white;padding:15px;border-radius:20px}
+.kayit{padding:10px;margin:5px;background:#fff0f6;border-radius:12px;cursor:pointer}
+#mesaj{color:#d94f8a;font-weight:bold}
+#canvas{display:none}
+</style>
+</head>
+<body>
+<div class="app">
+<h1>🎀 CuteMaker 🎀</h1>
+<p>Kendi tatlı tasarımını oluştur! ✨</p>
+<div class="tools">
+<input id="metin" type="text" placeholder="Bir şey yaz 💗">
+<button id="ekle">Yazıyı Ekle 💗</button><br><br>
+<label>🎨 Renk seç:</label>
+<input id="renk" type="color" value="#ffe8f2">
+<h3>🎀 Stickerlar</h3>
+<button class="sticker">🎀</button><button class="sticker">🌸</button><button class="sticker">🦋</button><button class="sticker">🐰</button><button class="sticker">⭐</button><button class="sticker">💗</button>
+<h3>🌈 Hazır Temalar</h3>
+<button class="tema" data-color="#ffe8f2">🌸 Pembe</button>
+<button class="tema" data-color="#e8ddff">💜 Mor</button>
+<button class="tema" data-color="#dff5ff">🩵 Mavi</button><br><br>
+<button id="kaydet">💾 Tasarımı Kaydet</button>
+<button id="indir">📥 PNG İndir</button>
+</div>
+<div id="onizleme">Önizleme ✨</div>
+<button id="tasarimlarim">🖼️ Tasarımlarım</button>
+<div id="kayitlar"></div>
+<p id="mesaj"></p>
+<canvas id="canvas" width="700" height="450"></canvas>
+</div>
+<script>
+const metin=document.getElementById("metin"),ekle=document.getElementById("ekle"),renk=document.getElementById("renk"),onizleme=document.getElementById("onizleme");
+const kaydet=document.getElementById("kaydet"),indir=document.getElementById("indir"),tasarimlarim=document.getElementById("tasarimlarim"),kayitlar=document.getElementById("kayitlar"),mesaj=document.getElementById("mesaj"),canvas=document.getElementById("canvas"),ctx=canvas.getContext("2d");
+ekle.onclick=()=>{onizleme.textContent=metin.value.trim()||"Önizleme ✨"};
+renk.oninput=()=>onizleme.style.backgroundColor=renk.value;
+document.querySelectorAll(".sticker").forEach(b=>b.onclick=()=>{if(onizleme.textContent==="Önizleme ✨")onizleme.textContent="";onizleme.textContent+=" "+b.textContent});
+document.querySelectorAll(".tema").forEach(b=>b.onclick=()=>{renk.value=b.dataset.color;onizleme.style.backgroundColor=b.dataset.color;document.body.style.backgroundColor=b.dataset.color});
+kaydet.onclick=()=>{let l=JSON.parse(localStorage.getItem("cuteMaker"))||[];l.push({yazi:onizleme.textContent,renk:renk.value});localStorage.setItem("cuteMaker",JSON.stringify(l));mesaj.textContent="Tasarım kaydedildi! 💗";};
+tasarimlarim.onclick=()=>{kayitlar.style.display=kayitlar.style.display==="block"?"none":"block";kayitlariGoster()};
+function kayitlariGoster(){let l=JSON.parse(localStorage.getItem("cuteMaker"))||[];kayitlar.innerHTML=l.length?"<h3>🖼️ Tasarımlarım</h3>":"Henüz kayıtlı tasarım yok. 💗";l.forEach((t,i)=>{let d=document.createElement("div");d.className="kayit";d.textContent="🎀 Tasarım "+(i+1)+" — "+t.yazi;d.onclick=()=>{onizleme.textContent=t.yazi;renk.value=t.renk;onizleme.style.backgroundColor=t.renk};kayitlar.appendChild(d)})}
+indir.onclick=()=>{ctx.fillStyle=renk.value;ctx.fillRect(0,0,700,450);ctx.fillStyle="#333";ctx.font="bold 40px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(onizleme.textContent,350,225,600);let a=document.createElement("a");a.download="CuteMaker-Tasarim.png";a.href=canvas.toDataURL("image/png");a.click();mesaj.textContent="PNG indirildi! 📥💗"};
+onizleme.style.backgroundColor=renk.value;
+</script>
+</body>
+</html>
